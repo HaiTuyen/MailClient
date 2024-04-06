@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
-  <h1 align="center">MAIL CLIENT (CLI)</h1>
+  <h1 align="center">MAIL CLIENT</h1>
 </p>
 
 
