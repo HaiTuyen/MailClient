@@ -7,8 +7,8 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/HaiTuyen/MailClient/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/HaiTuyen/MailClient/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/HaiTuyen/MailClient.svg)](https://github.com/HaiTuyen/MailClient/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/HaiTuyen/MailClient.svg)](https://github.com/HaiTuyen/MailClient/pulls)
 
 </div>
 
