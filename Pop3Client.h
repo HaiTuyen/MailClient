@@ -18,7 +18,6 @@ using namespace std;
 
 #define BUFFER_SIZE 1024
 
-
 class Pop3Client
 {
 private:
@@ -29,8 +28,9 @@ private:
     int pop3_port;
     vector<string>& local_uids;
     string receive;
+    string STORAGE_DIR;
 public:
-    Pop3Client(const string &pop3_server, const int &pop3_port, const string &usernam, vector<string>& local_uids);
+    Pop3Client(const string &pop3_server, const int &pop3_port, const string &usernam, vector<string>& local_uids, string STORAGE_DIR);
     ~Pop3Client();
     int connectToServer();
     int sendMessage(const string& message);
@@ -39,8 +39,8 @@ public:
     int getEmails();
     vector<string> parseEmailList(const string& buffer);
     vector<pair<size_t, string>> filerNewUids_index(vector<string> server_uids);
-    Mail parseReceivedEmail();
-    void cutResponse();
+    // Mail parseReceivedEmail();
+    // void cutResponse();
 };
 
 #endif

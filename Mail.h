@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include "File.h"
+#include <regex>
+
 using namespace std;
 
 
@@ -24,10 +26,13 @@ private:
     string date;
     string subject;
     string content;
+    string status;
+    string folder;
+    string file_name;
     vector<File>attachments;
 
 public:
-    Mail(const string& sender, vector<string> rcpts_to, vector<string> rcpts_cc, vector<string> rcpts_bcc, const string& subject, const string& content, vector<File>attachments);
+    Mail(const string& sender, vector<string> rcpts_to, vector<string> rcpts_cc, vector<string> rcpts_bcc, const string& subject, const string& content, const string& filename,vector<File>attachments);
     string getUid();
     string getSender();
     string getRecipient();
@@ -42,7 +47,11 @@ public:
     string getDate();
     string getSubject();
     string getContent();
+    string getStatus();
+    string getFolder();
+    string getFileName();
     vector<File> getAttachments();
+
 
     void setUid(const string& uid);
     void setSender(const string& sender);
@@ -58,6 +67,9 @@ public:
     void setDate(const string& date);
     void setSubject(const string& subject);
     void setContent(const string& content);
+    void setStatus(const string& status);
+    void setFolder(const string& folder);
+    void setFileName(const string& file_name);
     void setAttachments(vector<File> attachments);
 
     void parseEmail(const string& msg);

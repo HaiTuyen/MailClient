@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -Wall -Wextra
 
-SRCS = main.cpp SmtpClient.cpp Pop3Client.cpp MailClient.cpp File.cpp Mail.cpp
+SRCS = main.cpp SmtpClient.cpp Pop3Client.cpp MailClient.cpp File.cpp Mail.cpp sqlite3.c shell.c sqlite3ext.h
 OBJS = $(SRCS:.cpp=.o)
 
 TARGET = mailClient

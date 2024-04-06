@@ -1,0 +1,48 @@
+{
+    "username": "mailClient@fitus.hcmus.vn",
+    "password": "123456",
+    "smtp_server": "192.168.1.180",
+    "smtp_port": 2225,
+    "pop3_server": "192.168.1.180",
+    "pop3_port": 3335,
+    "database_name": "database.db",
+    "storage_dir": "storage/",
+    "filter_rules": [
+        {
+            "name": "onSender",
+            "conditions": [
+                {
+                    "senders": ["user01@fitus.hcmus.vn", "user02@fitus.hcmus.vn"],
+                    "folder": "project"
+                }
+            ]
+        }, 
+        {
+            "name": "onSubject",
+            "conditions": [
+                {
+                    "words": ["urgent", "ASAP"],
+                    "folder": "important"
+                }
+            ]
+        },
+        {
+            "name": "onContent",
+            "conditions": [
+                {
+                    "words": ["report", "meetings"],
+                    "folder": "work"
+                }
+            ]
+        }, 
+        {
+            "name": "onContent&Subject",
+            "conditions": [
+                {
+                    "words": ["virus", "hack", "crack"],
+                    "folder": "spam"
+                }
+            ]
+        }
+    ]
+}

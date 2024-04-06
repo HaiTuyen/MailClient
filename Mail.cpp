@@ -1,14 +1,20 @@
 #include "Mail.h"
 
-Mail::Mail(const string& sender, vector<string> rcpts_to, vector<string> rcpts_cc, vector<string> rcpts_bcc, const string& subject, const string& content, vector<File>attachments)   
-: sender(sender), rcpts_to(rcpts_to), rcpts_cc(rcpts_cc), rcpts_bcc(rcpts_bcc), subject(subject), content(content), attachments(attachments) {}
+Mail::Mail(const string& sender, vector<string> rcpts_to, vector<string> rcpts_cc, vector<string> rcpts_bcc, const string& subject, const string& content, const string& filename, vector<File>attachments)   
+: sender(sender), rcpts_to(rcpts_to), rcpts_cc(rcpts_cc), rcpts_bcc(rcpts_bcc), subject(subject), content(content), file_name(filename), attachments(attachments) {}
 
 string Mail::getUid() {
     return this->uid;
 }
 
 string Mail::getSender() {
-    return sender;
+    regex e("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"); 
+    smatch match;
+    if (regex_search(this->sender, match, e)) {
+        return match.str();
+    } else {
+        return "";
+    }
 }
 
 string Mail::getRecipient() {
@@ -59,6 +65,17 @@ string Mail::getContent() {
     return content;
 }
 
+string Mail::getStatus() {
+    return status;
+}
+
+string Mail::getFolder() {
+    return folder;
+}
+
+string Mail::getFileName() {
+    return file_name;
+}
 
 vector<File> Mail::getAttachments() {
     return attachments;
@@ -118,6 +135,18 @@ void Mail::setSubject(const string& subject) {
 
 void Mail::setContent(const string& content) {
     this->content = content;
+}
+
+void Mail::setStatus(const string& status) {
+    this->status = status;
+}
+
+void Mail::setFolder(const string& folder) {
+    this->folder = folder;
+}
+
+void Mail::setFileName(const string& file_name) {
+    this->file_name = file_name;
 }
 
 void Mail::setAttachments(vector<File> attachments) {

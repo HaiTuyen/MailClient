@@ -4,9 +4,11 @@
 int main()
 {
     MailClient mail_client;
-    int main_choice = 0, edit_choice = 0, receive_choice = 0;
+    int main_choice = 0, edit_choice = 0, receive_choice = 0, mailbox_choice = 0, download_choice = 0;
     int attachmentChoice = 0;
     string to = "", cc = "", bcc = "", subject = "", content = "";
+    string mailbox_folder = "inbox";
+    vector<Mail> mails;
 
     vector<string> attachment_paths;
 
@@ -76,14 +78,19 @@ int main()
             }
             break;
         case 2:
+            receive_choice = 0;
             while (receive_choice != 6)
             {
-                int inbox_choice = 0;
-                vector<Mail> mails;
+                mails.clear();
+
+                // Pull new emails from server (if any)
+                mail_client.pullNewEmails();
+
+                mailbox_choice = 0;
                 cout << "------------------------- RECEIVING EMAIL CONSOLE -------------------------\n";
                 cout << "| Select a folder to see emails:                                           |\n";
                 cout << "| 1. Inbox                                                                 |\n";
-                cout << "| 2. Projects                                                              |\n";
+                cout << "| 2. Project                                                               |\n";
                 cout << "| 3. Important                                                             |\n";
                 cout << "| 4. Work                                                                  |\n";
                 cout << "| 5. Spam                                                                  |\n";
@@ -94,101 +101,112 @@ int main()
                 switch (receive_choice)
                 {
                 case 1:
-                    mail_client.retriveLocalEmails("storage/inbox/");
+                    mailbox_folder = "inbox";
+                    break;
+                case 2:
+                    mailbox_folder = "project";
+                    break;
+                case 3:
+                    mailbox_folder = "important";
+                    break;
+                case 4:
+                    mailbox_folder = "work";
+                    break;
+                case 5:
+                    mailbox_folder = "spam";
+                    break;
 
-                    while (inbox_choice == 0)
+                default:
+                    break;
+                }
+
+                while (mailbox_choice == 0 && receive_choice != 6)
+                {
+                    mails = mail_client.getMailsInFolder(mailbox_folder);
+                    cout << "mails size: " << mails.size() << endl;
+                    cout << "------------------------------- MAIL BOX -------------------------------\n";
+                    for (size_t i = 0; i < mails.size(); i++)
                     {
-                        mails = mail_client.getMails("storage/inbox/");
-                        // cout << "mails size: " << mails.size() << endl;
-                        cout << "-------------------------------- INBOX --------------------------------\n";
-                        for (size_t i = 0; i < mails.size(); i++)
+                        cout << "| " << i + 1 << ". ";
+                        if (mail_client.getStatus(mails[i].getMessageID()) == 0)
                         {
-                            string temp = "ID: " + mails[i].getMessageID() + "Hehe" + "\r\n";
-                            cout << "| " << i + 1 << ". " << endl;
+                            cout << "[NEW] \r\n";
+                        }
+                        else
+                        {
+                            cout << "\r\n";
+                        }
+                        {
                             cout << "| From: " << mails[i].getSender() << endl;
                             cout << "| Subject: " << mails[i].getSubject() << endl;
                             cout << "| Date: " << mails[i].getDate() << endl;
                         }
-                        cout << "-----------------------------------------------------------------------\n";
-                        do
+                    }
+                    cout << "-----------------------------------------------------------------------\n";
+                    do
+                    {
+                        cout << "Select an email to view (press 0 to show mails list, press -1 to exit): ";
+                        cin >> mailbox_choice;
+                        switch (mailbox_choice)
                         {
-                            cout << "Select an email to view (press 0 to show mails list, press -1 to exit): ";
-                            cin >> inbox_choice;
-                            switch (inbox_choice)
+                        case 0:
+                            break;
+                        case -1:
+                            break;
+                        default:
+                            mail_client.updateStatus(mails[mailbox_choice - 1].getMessageID(), 1);
+                            cout << "-------------------------------- EMAIL --------------------------------\n";
+                            cout << "From: " << mails[mailbox_choice - 1].getSender() << endl;
+                            cout << "To: " << mails[mailbox_choice - 1].getRecipient() << endl;
+                            cout << "Subject: " << mails[mailbox_choice - 1].getSubject() << endl;
+                            cout << "Date: " << mails[mailbox_choice - 1].getDate() << endl;
+                            cout << "Content: " << mails[mailbox_choice - 1].getContent() << endl;
+                            if (mails[mailbox_choice - 1].getAttachments().size() > 0)
                             {
-                            case 0:
-                                break;
-                            case -1:
-                                break;
-                            default:
-                                cout << "-------------------------------- EMAIL --------------------------------\n";
-                                cout << "From: " << mails[inbox_choice - 1].getSender() << endl;
-                                cout << "To: " << mails[inbox_choice - 1].getRecipient() << endl;
-                                cout << "Subject: " << mails[inbox_choice - 1].getSubject() << endl;
-                                cout << "Date: " << mails[inbox_choice - 1].getDate() << endl;
-                                cout << "Content: " << mails[inbox_choice - 1].getContent() << endl;
-                                if (mails[inbox_choice - 1].getAttachments().size() > 0)
+                                cout << "Attachments: " << endl;
+                                for (size_t i = 0; i < mails[mailbox_choice - 1].getAttachments().size(); i++)
                                 {
-                                    cout << "Attachments: " << endl;
-                                    for (size_t i = 0; i < mails[inbox_choice - 1].getAttachments().size(); i++)
+                                    cout << "---> Attachment " << i + 1 << ": " << mails[mailbox_choice - 1].getAttachments()[i].getName() << endl;
+                                }
+                                cout << "Do you want to download all attachments? (1. Yes, 2. No): ";
+                                try
+                                {
+                                    cin >> download_choice;
+                                    if (download_choice == 1)
                                     {
-                                        cout << "---> Attachment " << i + 1 << ": " << mails[inbox_choice - 1].getAttachments()[i].getName() << endl;
-                                    }
-                                    cout << "Do you want to download all attachments? (1. Yes, 2. No): ";
-                                    try
-                                    {
-                                        int download_choice;
-                                        cin >> download_choice;
-                                        if (download_choice == 1)
+                                        cout << "Enter the folder path to download (ENTER to exit): ";
+                                        cin.ignore();
+                                        string download_path;
+                                        getline(cin, download_path);
+                                        if (!download_path.empty())
                                         {
-                                            cout << "Enter the folder path to download (ENTER to exit): ";
-                                            cin.ignore();
-                                            string download_path;
-                                            getline(cin, download_path);
-                                            if (!download_path.empty())
+                                            if (download_path.back() != '/')
                                             {
-                                                if (download_path.back() != '/')
-                                                {
-                                                    download_path += '/';
-                                                }
-                                                for (size_t i = 0; i < mails[inbox_choice - 1].getAttachments().size(); i++)
-                                                {
-                                                    mails[inbox_choice - 1].getAttachments()[i].writeFile(mails[inbox_choice - 1].getAttachments()[i].getBase64Content(), download_path + mails[inbox_choice - 1].getAttachments()[i].getName());
-                                                }
+                                                download_path += '/';
                                             }
-                                            else
+                                            for (size_t i = 0; i < mails[mailbox_choice - 1].getAttachments().size(); i++)
                                             {
-                                                cout << "[Eror]: Path is required\n";
+                                                mails[mailbox_choice - 1].getAttachments()[i].writeFile(mails[mailbox_choice - 1].getAttachments()[i].getBase64Content(), download_path + mails[mailbox_choice - 1].getAttachments()[i].getName());
                                             }
                                         }
-                                    }
-                                    catch (const std::exception &e)
-                                    {
-                                        // cout << "Error: " << e.what() << "\n";
+                                        else
+                                        {
+                                            cout << "[Eror]: Path is required\n";
+                                        }
                                     }
                                 }
-                                cout << "-----------------------------------------------------------------------\n";
-                                break;
+                                catch (const std::exception &e)
+                                {
+                                    cout << "[Eror]: " << e.what() << "\n";
+                                }
                             }
-                        } while (inbox_choice != -1 && inbox_choice != 0);
-                    }
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-
-                default:
-                    cout << "Invalid choice\n";
-                    break;
+                            cout << "-----------------------------------------------------------------------\n";
+                            break;
+                        }
+                    } while (mailbox_choice != -1 && mailbox_choice != 0);
                 }
             }
 
-            // mail_client.getMail();
             break;
         case 3:
             while (edit_choice != 6)

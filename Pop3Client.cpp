@@ -1,7 +1,7 @@
 #include "Pop3Client.h"
 
-Pop3Client::Pop3Client(const string &pop3_server, const int &pop3_port, const string &username, vector<string> &local_uids)
-    : username(username), pop3_server(pop3_server), pop3_port(pop3_port), local_uids(local_uids)
+Pop3Client::Pop3Client(const string &pop3_server, const int &pop3_port, const string &username, vector<string> &local_uids,  string STORAGE_DIR)
+    : username(username), pop3_server(pop3_server), pop3_port(pop3_port), local_uids(local_uids), STORAGE_DIR(STORAGE_DIR)
 {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
@@ -205,7 +205,7 @@ int Pop3Client::getEmails()
         readRETRResponse();
         message += this->receive;
 
-        ofstream file("storage/inbox/" + uid);
+        ofstream file(STORAGE_DIR + uid);
         file << message;
         file.close();
         
@@ -250,146 +250,146 @@ vector<pair<size_t, string>> Pop3Client::filerNewUids_index(vector<string> serve
     return new_uids;
 }
 
-Mail Pop3Client::parseReceivedEmail()
-{
-    string buffer(this->receive);
-    // cout << "----------------Email----------------\n";
-    // cout << "Buffer: " << buffer << '\n';
-    // cout << "---------------- END BUFFER ----------------\n";
-    Mail mail("", vector<string>{}, vector<string>{}, vector<string>{}, "", "", vector<File>{});
+// Mail Pop3Client::parseReceivedEmail()
+// {
+//     string buffer(this->receive);
+//     // cout << "----------------Email----------------\n";
+//     // cout << "Buffer: " << buffer << '\n';
+//     // cout << "---------------- END BUFFER ----------------\n";
+//     Mail mail("", vector<string>{}, vector<string>{}, vector<string>{}, "", "",  vector<File>{});
 
-    string header = "";
-    string content = "";
-    vector<string> attachments;
+//     string header = "";
+//     string content = "";
+//     vector<string> attachments;
 
-    if (buffer.find("multipart/mixed") != string::npos)
-    {
-        // cout << "Buffer: " << buffer << '\n';
-        size_t start_pos = buffer.find("boundary=\"");
-        // cout << "Start pos: " << start_pos << '\n';
-        size_t end_pos = buffer.find("\"", start_pos + 10);
-        // cout << "End pos: " << end_pos << '\n';
-        string boundary = "--" + buffer.substr(start_pos + 10, end_pos - start_pos - 10);
-        // cout << "Boundary: " << boundary << '\n';
-        mail.setBoundary(boundary);
+//     if (buffer.find("multipart/mixed") != string::npos)
+//     {
+//         // cout << "Buffer: " << buffer << '\n';
+//         size_t start_pos = buffer.find("boundary=\"");
+//         // cout << "Start pos: " << start_pos << '\n';
+//         size_t end_pos = buffer.find("\"", start_pos + 10);
+//         // cout << "End pos: " << end_pos << '\n';
+//         string boundary = "--" + buffer.substr(start_pos + 10, end_pos - start_pos - 10);
+//         // cout << "Boundary: " << boundary << '\n';
+//         mail.setBoundary(boundary);
 
-        size_t content_start_pos = buffer.find(boundary);
-        // cout << "Content start pos: " << content_start_pos << '\n';
-        header = buffer.substr(0, content_start_pos);
-        // cout << "Header: " << header << '\n';
+//         size_t content_start_pos = buffer.find(boundary);
+//         // cout << "Content start pos: " << content_start_pos << '\n';
+//         header = buffer.substr(0, content_start_pos);
+//         // cout << "Header: " << header << '\n';
 
-        size_t attachment_start_pos = buffer.find(boundary, content_start_pos + boundary.size() + 1);
-        // cout << "Attachment start pos: " << attachment_start_pos << '\n';
-        content = buffer.substr(content_start_pos + boundary.size() + 1, attachment_start_pos - content_start_pos - boundary.size() - 1);
-        // cout << "Content: " << content << '\n';
+//         size_t attachment_start_pos = buffer.find(boundary, content_start_pos + boundary.size() + 1);
+//         // cout << "Attachment start pos: " << attachment_start_pos << '\n';
+//         content = buffer.substr(content_start_pos + boundary.size() + 1, attachment_start_pos - content_start_pos - boundary.size() - 1);
+//         // cout << "Content: " << content << '\n';
 
-        while (attachment_start_pos != string::npos)
-        {
-            size_t attachment_end_pos = buffer.find(boundary, attachment_start_pos + boundary.size() + 1) != string::npos ? buffer.find(boundary, attachment_start_pos + boundary.size() + 1) : 0;
-            // cout << "Attachment start pos: " << attachment_start_pos << '\n';
-            // cout << "Attachment end pos: " << attachment_end_pos << '\n';
-            string attachment = buffer.substr(attachment_start_pos, attachment_end_pos - attachment_start_pos);
-            // cout << "Attachment: " << attachment << '\n';
-            attachments.push_back(attachment);
-            if (attachment_end_pos == 0)
-            {
-                break;
-            };
-            attachment_start_pos = buffer.find(boundary, attachment_end_pos + boundary.size() + 1);
-        }
-    }
-    else
-    {
-        size_t content_start_pos = buffer.find("\r\n\r\n");
-        header = buffer.substr(0, content_start_pos);
-        content = buffer.substr(content_start_pos);
-    }
+//         while (attachment_start_pos != string::npos)
+//         {
+//             size_t attachment_end_pos = buffer.find(boundary, attachment_start_pos + boundary.size() + 1) != string::npos ? buffer.find(boundary, attachment_start_pos + boundary.size() + 1) : 0;
+//             // cout << "Attachment start pos: " << attachment_start_pos << '\n';
+//             // cout << "Attachment end pos: " << attachment_end_pos << '\n';
+//             string attachment = buffer.substr(attachment_start_pos, attachment_end_pos - attachment_start_pos);
+//             // cout << "Attachment: " << attachment << '\n';
+//             attachments.push_back(attachment);
+//             if (attachment_end_pos == 0)
+//             {
+//                 break;
+//             };
+//             attachment_start_pos = buffer.find(boundary, attachment_end_pos + boundary.size() + 1);
+//         }
+//     }
+//     else
+//     {
+//         size_t content_start_pos = buffer.find("\r\n\r\n");
+//         header = buffer.substr(0, content_start_pos);
+//         content = buffer.substr(content_start_pos);
+//     }
 
-    if (!header.empty())
-    {
-        stringstream ss(header);
-        string line;
-        while (getline(ss, line, '\n'))
-        {
-            if (line.find("Message-ID:") != string::npos)
-            {
-                string message_id = line.substr(line.find(":") + 2);
-                mail.setMessageID(message_id);
-            }
-            else if (line.find("Date:") != string::npos)
-            {
-                string date = line.substr(line.find(":") + 2);
-                mail.setDate(date);
-            }
-            else if (line.find("MIME-Version:") != string::npos)
-            {
-                string mime_version = line.substr(line.find(":") + 2);
-                mail.setMimeVersion(mime_version);
-            }
-            else if (line.find("User-Agent:") != string::npos)
-            {
-                string user_agent = line.substr(line.find(":") + 2);
-                mail.setUserAgent(user_agent);
-            }
-            else if (line.find("Content-Language:") != string::npos)
-            {
-                string content_language = line.substr(line.find(":") + 2);
-                mail.setUserAgent(content_language);
-            }
-            else if (line.find("To:") != string::npos)
-            {
-                string sender = line.substr(line.find(":") + 2);
-                mail.setSender(sender);
-            }
-            else if (line.find("From:") != string::npos)
-            {
-                string recipient = line.substr(line.find(":") + 2);
-                mail.setRecipient(recipient);
-            }
-        }
-    }
+//     if (!header.empty())
+//     {
+//         stringstream ss(header);
+//         string line;
+//         while (getline(ss, line, '\n'))
+//         {
+//             if (line.find("Message-ID:") != string::npos)
+//             {
+//                 string message_id = line.substr(line.find(":") + 2);
+//                 mail.setMessageID(message_id);
+//             }
+//             else if (line.find("Date:") != string::npos)
+//             {
+//                 string date = line.substr(line.find(":") + 2);
+//                 mail.setDate(date);
+//             }
+//             else if (line.find("MIME-Version:") != string::npos)
+//             {
+//                 string mime_version = line.substr(line.find(":") + 2);
+//                 mail.setMimeVersion(mime_version);
+//             }
+//             else if (line.find("User-Agent:") != string::npos)
+//             {
+//                 string user_agent = line.substr(line.find(":") + 2);
+//                 mail.setUserAgent(user_agent);
+//             }
+//             else if (line.find("Content-Language:") != string::npos)
+//             {
+//                 string content_language = line.substr(line.find(":") + 2);
+//                 mail.setUserAgent(content_language);
+//             }
+//             else if (line.find("To:") != string::npos)
+//             {
+//                 string sender = line.substr(line.find(":") + 2);
+//                 mail.setSender(sender);
+//             }
+//             else if (line.find("From:") != string::npos)
+//             {
+//                 string recipient = line.substr(line.find(":") + 2);
+//                 mail.setRecipient(recipient);
+//             }
+//         }
+//     }
 
-    if (!content.empty())
-    {
-        mail.setContent(content);
-    }
+//     if (!content.empty())
+//     {
+//         mail.setContent(content);
+//     }
 
-    if (!attachments.empty())
-    {
-        vector<File> files;
-        for (string attachment : attachments)
-        {
-            // cout << "----------------Attachment----------------\n";
-            // cout << "Attachment size: " << attachments.size() << '\n';
-            size_t start_pos = attachment.find("Content-Type:") + 14;
-            size_t end_pos = attachment.find(";", start_pos);
-            string content_type = attachment.substr(start_pos, end_pos - start_pos);
+//     if (!attachments.empty())
+//     {
+//         vector<File> files;
+//         for (string attachment : attachments)
+//         {
+//             // cout << "----------------Attachment----------------\n";
+//             // cout << "Attachment size: " << attachments.size() << '\n';
+//             size_t start_pos = attachment.find("Content-Type:") + 14;
+//             size_t end_pos = attachment.find(";", start_pos);
+//             string content_type = attachment.substr(start_pos, end_pos - start_pos);
 
-            start_pos = attachment.find("name=") + 6;
-            // cout << "Start pos: " << start_pos << '\n';
-            end_pos = attachment.find("\"", start_pos);
-            // cout << "End pos: " << end_pos << '\n';
-            string file_name = attachment.substr(start_pos, end_pos - start_pos);
-            // cout << "File name: " << file_name << '\n';
+//             start_pos = attachment.find("name=") + 6;
+//             // cout << "Start pos: " << start_pos << '\n';
+//             end_pos = attachment.find("\"", start_pos);
+//             // cout << "End pos: " << end_pos << '\n';
+//             string file_name = attachment.substr(start_pos, end_pos - start_pos);
+//             // cout << "File name: " << file_name << '\n';
 
-            // start_pos = attachment.find("\r\n\r\n", end_pos) + 4;
-            string fie_content = attachment.substr(start_pos);
-            // cout << "File content: " << fie_content << '\n';
+//             // start_pos = attachment.find("\r\n\r\n", end_pos) + 4;
+//             string fie_content = attachment.substr(start_pos);
+//             // cout << "File content: " << fie_content << '\n';
 
-            File file(file_name);
-            file.setContentType(content_type);
-            file.setBase64Content(fie_content);
-            files.push_back(file);
-        }
-        mail.setAttachments(files);
-    }
+//             File file(file_name);
+//             file.setContentType(content_type);
+//             file.setBase64Content(fie_content);
+//             files.push_back(file);
+//         }
+//         mail.setAttachments(files);
+//     }
 
-    return mail;
-}
+//     return mail;
+// }
 
-void Pop3Client::cutResponse()
-{
-    // size_t end_pos = this->receive.find("\r\n.\r\n");
-    // this->receive = this->receive.substr(0, end_pos);
-    return;
-}
+// void Pop3Client::cutResponse()
+// {
+//     // size_t end_pos = this->receive.find("\r\n.\r\n");
+//     // this->receive = this->receive.substr(0, end_pos);
+//     return;
+// }
