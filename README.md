@@ -17,95 +17,51 @@
 <p align="center">A CLI application that enables user to send and receive emails using POP3 and SMTP protocols.
 </p>
 
-## 📝 Table of Contents
-
-- [About](#about)
-- [Getting Started](#getting_started)
-- [Deployment](#deployment)
-- [Usage](#usage)
-- [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
+This project is a Mail Client application developed in C++ for a Networking course. The application uses the Post Office Protocol (POP3) for receiving emails and the Simple Mail Transfer Protocol (SMTP) for sending emails.
+
+The main functionalities of this application include sending and receiving emails, with the capability to send emails with file attachments. Additionally, it can filter emails using a configuration file. This project serves as a practical application of network programming concepts and provides hands-on experience with widely-used email protocols.
 
 
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
+- To simplify, a mock Mail Server is needed. It can be downloaded from this link: https://github.com/eugenehr/test-mail-server/releases/download/1.0/test-mail-server-1.0.jar.
 
-What things you need to install the software and how to install them.
+- In order to run the mail server, Java 8 (JDK 8u361) is required. The following command can be used to run the server with SMTP port 2225 and POP3 port 3335:
+```
+java -jar test-mail-server-1.0.jar -s 2225 -p 3335 -m ./
+```
+- Run on Linux operating system.
 
-```
-Give examples
-```
 
 ### Installing
+Here are the steps to install the application:
 
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
+1. Clone the repository to your machine:
+```bash
+git clone https://github.com/HaiTuyen/MailClient.git
 ```
-Give the example
+2. Navigate to the directory containing the source code, create a `build` directory and navigate into it:
+```bash
+mkdir build
+cd build
 ```
-
-And repeat
-
+3. Run `cmake` from the `build` directory:
+```bash
+cmake ..
 ```
-until finished
+4. Build the executable file and run it:
+```bash
+make
+./MailClient
 ```
-
-End with an example of getting some data out of the system or using it for a little demo.
-
-## 🔧 Running the tests <a name = "tests"></a>
-
-Explain how to run the automated tests for this system.
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## 🎈 Usage <a name="usage"></a>
-
-Add notes about how to use the system.
-
-## 🚀 Deployment <a name = "deployment"></a>
-
-Add additional notes about how to deploy this on a live system.
-
-## ⛏️ Built Using <a name = "built_using"></a>
-
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
 
 ## ✍️ Authors <a name = "authors"></a>
-
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
-
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
-
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+- [@HaiTuyen](https://github.com/HaiTuyen)
+- [@NoxionK](https://github.com/NoxionK)
+- [@HungPhan2003](https://github.com/HungPhan2003)
