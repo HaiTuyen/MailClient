@@ -184,7 +184,7 @@ void Mail::parseEmail(const string& buffer) {
         size_t attachment_final_pos = buffer.find(boundary + "--", attachment_start_pos + boundary.size() + 1);
         // cout << "Attachment final pos: " << attachment_final_pos << '\n';
         string attachment_content = buffer.substr(attachment_start_pos, attachment_final_pos + boundary.size() + 2 - attachment_start_pos);
-        // ofstream out("attachments-content.txt");
+        // ofstream out("attachments-content" + boundary + ".txt");
         // out << attachment_content;
         // out.close();
 

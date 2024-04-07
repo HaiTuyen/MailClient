@@ -14,7 +14,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <nlohmann/json.hpp>
+#include <atomic>
 #include <fstream>
+#include <thread>
+#include <chrono>
+
 
 using namespace std;
 
@@ -31,6 +35,9 @@ private:
     int POP3_PORT;
     string DATABASE;
     string STORAGE_DIR;
+    int AUTOLOAD_SEC;
+    atomic<bool> stopFlag{false};
+    thread pullEmailThread;
     
 public:
     MailClient();
@@ -48,6 +55,9 @@ public:
     vector<string> getFileNamesInFolder(string folder);
     nlohmann::json readJSONFile(string file_path);
     string filterFolder(Mail mail);
+
+    void startPullEmailThread();
+    void stopPullEmailThread();
 };
 
 #endif

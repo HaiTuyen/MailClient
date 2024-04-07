@@ -12,14 +12,17 @@ MailClient::MailClient(/* args */)
     this->POP3_PORT = this->config["pop3_port"];
     this->DATABASE = this->config["database_name"];
     this->STORAGE_DIR = this->config["storage_dir"];
+    this->AUTOLOAD_SEC = this->config["auto_load"];
 
     initDatabase();
     // Update this->local_uids
     retriveAllLocalEmails(STORAGE_DIR);
+    startPullEmailThread();
 }
 
 MailClient::~MailClient()
 {
+    this->stopPullEmailThread();
 }
 
 int MailClient::sendMail(string to, string cc, string bcc, string subject, string content, vector<string> attachment_paths)
@@ -510,4 +513,23 @@ string MailClient::filterFolder(Mail mail)
     }
 
     return "inbox";
+}
+
+
+void MailClient::startPullEmailThread()
+{
+    this->pullEmailThread = thread([this] {
+        while (!this->stopFlag)
+        {
+            // cout << "I am gonna pull new emails\n";
+            this->pullNewEmails();
+            this_thread::sleep_for(chrono::seconds(this->AUTOLOAD_SEC));
+        }
+    });
+}
+
+void MailClient::stopPullEmailThread()
+{
+    this->stopFlag = true;
+    this->pullEmailThread.join();
 }
