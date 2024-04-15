@@ -1,5 +1,6 @@
 #include "MailClient.h"
 #include "File.h"
+#include <limits> // for numeric_limits
 
 int main()
 {
@@ -21,7 +22,11 @@ int main()
         cout << "| 4. Exit                              |\n";
         cout << "---------------------------------------\n";
         cout << "Enter your choice:";
-        cin >> main_choice;
+        while(!(cin >> main_choice) || main_choice < 1 || main_choice > 4) {
+            cin.clear(); // clear the error flags
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore the rest of the line
+            cout << "Invalid input. Please enter a number between 1 and 4: ";
+        }
         switch (main_choice)
         {
         case 1:
