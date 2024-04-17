@@ -58,6 +58,14 @@ public:
 
     void startPullEmailThread();
     void stopPullEmailThread();
+
+    void saveConfig();
+
+    void updateSenderEmail(const std::string& newEmail);
+    void updateSmtpServer(const std::string& newServer);
+    void updateSmtpPort(int newPort);
+    void updatePop3Server(const std::string& newServer);
+    void updatePop3Port(int newPort);
 };
 
 #endif

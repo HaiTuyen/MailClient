@@ -11,8 +11,14 @@ int main()
     string mailbox_folder = "inbox";
     vector<Mail> mails;
 
-    vector<string> attachment_paths;
+    std::string new_sender_email;
+    std::string new_smtp_server;
+    std::string new_smtp_port;
+    std::string new_pop3_server;
+    std::string new_pop3_port;
 
+    vector<string> attachment_paths;
+    
     while (main_choice != 4)
     {
         cout << "-----------------MENU------------------\n";
@@ -231,15 +237,28 @@ int main()
                 {
                 case 1:
                     cout << "Enter new sender email: ";
+                    getline(cin, new_sender_email);
+                    mail_client.updateSenderEmail(new_sender_email);
                     break;
                 case 2:
                     cout << "Enter new SMTP server: ";
+                    getline(cin, new_smtp_server);
+                    mail_client.updateSmtpServer(new_smtp_server);
                     break;
                 case 3:
                     cout << "Enter new SMTP port: ";
+                    getline(cin, new_smtp_port);
+                    mail_client.updateSmtpPort(std::stoi(new_smtp_port));
                     break;
                 case 4:
                     cout << "Enter new POP3 server: ";
+                    getline(cin, new_pop3_server);
+                    mail_client.updatePop3Server(new_pop3_server);
+                    break;
+                case 5:
+                    cout << "Enter new POP3 port: ";
+                    getline(cin, new_pop3_port);
+                    mail_client.updatePop3Port(std::stoi(new_pop3_port));
                     break;
                 }
             }

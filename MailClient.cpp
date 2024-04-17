@@ -528,8 +528,43 @@ void MailClient::startPullEmailThread()
     });
 }
 
+void MailClient::saveConfig() {
+    std::ofstream file("../config.json");
+    file << std::setw(4) << this->config << std::endl;
+}
+
 void MailClient::stopPullEmailThread()
 {
     this->stopFlag = true;
     this->pullEmailThread.join();
+}
+
+void MailClient::updateSenderEmail(const std::string& newEmail) {
+    this->USERNAME = newEmail;
+    this->config["username"] = newEmail;
+    saveConfig();
+}
+
+void MailClient::updateSmtpServer(const std::string& newServer) {
+    this->SMTP_SERVER = newServer;
+    this->config["smtp_server"] = newServer;
+    saveConfig();
+}
+
+void MailClient::updateSmtpPort(int newPort) {
+    this->SMTP_PORT = newPort;
+    this->config["smtp_port"] = newPort;
+    saveConfig();
+}
+
+void MailClient::updatePop3Server(const std::string& newServer) {
+    this->POP3_SERVER = newServer;
+    this->config["pop3_server"] = newServer;
+    saveConfig();
+}
+
+void MailClient::updatePop3Port(int newPort) {
+    this->POP3_PORT = newPort;
+    this->config["pop3_port"] = newPort;
+    saveConfig();
 }
